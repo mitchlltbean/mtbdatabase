@@ -15,18 +15,35 @@ var connection = mysql.createConnection({
   database: "hw_base",
 });
 
-connection.connect(function (err) {
-  if (err) throw err;
-  console.log("connected as id " + connection.threadId + "\n");
-  createDept();
-});
+function start() {
+  inquirer
+    .prompt({
+      name: "start",
+      type: "list",
+      message: "Would you like Create",
+      choices: ["Create Department", "Create Role", "Create Employee"],
+    })
+    .then(function (answer) {
+      // based on their answer, either call the bid or the post functions
+      if (answer.start === "Create Department") {
+        createDept();
+      } else if (answer.start === "Create Role") {
+        createRole();
+      } else if (answer.start === "Create Employee") {
+        createEmployee();
+      } else {
+        connection.end();
+      }
+    });
+}
+start();
 
 function createDept() {
   inquirer
     .prompt([
       {
         type: "input",
-        name: "addDepart",
+        name: "department",
         message: "ADD department?",
       },
     ])
@@ -34,95 +51,103 @@ function createDept() {
       // when finished prompting, insert a new item into the db with that info
       connection.query(
         "INSERT INTO department SET ?",
-        { name: answer.addDepart },
+        { name: answer.department },
         function (err, data) {
           if (err) throw err;
           console.table(data);
-
-          createRole();
+          start();
         }
       );
     });
 }
 
 function createRole() {
-  inquirer
-    .prompt([
-      {
-        type: "input",
-        name: "title",
-        message: "what role?",
-      },
-      {
-        type: "input",
-        name: "salary",
-        message: "what salary?",
-      },
-    ])
-    .then((answer) => {
-      // when finished prompting, insert a new item into the db with that info
-      connection.query(
-        "INSERT INTO role SET ?",
-        { title: answer.title },
-        function (err, data) {
-          if (err) throw err;
-          // console.table(data);
-        }
-      );
-    });
-  inquirer
-    .prompt([
-      {
-        type: "input",
-        name: "title",
-        message: "what role?",
-      },
-      {
-        type: "input",
-        name: "salary",
-        message: "what salary?",
-      },
-    ])
-    .then((answer) => {
-      // when finished prompting, insert a new item into the db with that info
-      console.log;
-      connection.query(
-        "INSERT INTO role SET ?",
-        { salary: answer.salary },
-        function (err, data) {
-          if (err) throw err;
-          // console.table(data);
-        }
-      );
-      createEmployee();
-    });
+  connection.query("SELECT * FROM department", function (err, data) {
+    if (err) throw err;
+    inquirer
+      .prompt([
+        {
+          type: "input",
+          name: "title",
+          message: "what role?",
+        },
+        {
+          type: "number",
+          name: "salary",
+          message: "what salary?",
+        },
+        {
+          type: "list",
+          name: "list",
+          message: "Select department",
+          choices: data.map((department) => ({
+            name: department.name,
+            value: department.id,
+          })),
+        },
+      ])
+      .then((answer) => {
+        // when finished prompting, insert a new item into the db with that info
+        connection.query(
+          "INSERT INTO role SET ?",
+          {
+            title: answer.title,
+            salary: answer.salary,
+            department: answer.list,
+          },
+          function (err, data) {
+            if (err) throw err;
+            console.table(data);
+            start();
+          }
+        );
+      });
+  });
 }
+//TODO: get list of roles
+//TODO: Format list to have name value pairs
+//TODO: Update Insert to refer to selected role
 
 function createEmployee() {
-  inquirer
-    .prompt([
-      {
-        type: "input",
-        name: "first_name",
-        message: "what first name?",
-      },
-      {
-        type: "input",
-        name: "last_name",
-        message: "what last name?",
-      },
-    ])
-    .then((answer) => {
-      // when finished prompting, insert a new item into the db with that info
-      connection.query(
-        "INSERT INTO employee SET ?",
-        { first_name: answer.first_name },
-        function (err, data) {
-          if (err) throw err;
-          // console.table(data);
-        }
-      );
-    });
+  connection.query("SELECT * FROM role", function (err, data) {
+    if (err) throw err;
+    inquirer
+      .prompt([
+        {
+          type: "input",
+          name: "first_name",
+          message: "what first name?",
+        },
+        {
+          type: "input",
+          name: "last_name",
+          message: "what last name?",
+        },
+        {
+          type: "list",
+          name: "list",
+          message: "Select department",
+          choices: data.map((role) => ({
+            value: role.id,
+          })),
+        },
+      ])
+      .then((answer) => {
+        // when finished prompting, insert a new item into the db with that info
+        connection.query(
+          "INSERT INTO employee SET ?",
+          {
+            first_name: answer.first_name,
+            last_name: answer.last_name,
+            role_id: answer.list,
+          },
+          function (err, data) {
+            if (err) throw err;
+            console.table(data);
+            start();
+          }
+        );
+      });
+  });
 }
-
-connection.end();
+// connection.end()
