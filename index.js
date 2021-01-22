@@ -21,7 +21,7 @@ function start() {
       name: "start",
       type: "list",
       message: "Would you like Create",
-      choices: ["Create Department", "Create Role", "Create Employee"],
+      choices: ["Create Department", "Create Role", "Create Employee", "Exit"],
     })
     .then(function (answer) {
       // based on their answer, either call the bid or the post functions
@@ -31,9 +31,8 @@ function start() {
         createRole();
       } else if (answer.start === "Create Employee") {
         createEmployee();
-      } else {
-        connection.end();
-      }
+      } else answer.start === "Exit";
+      connection.end();
     });
 }
 start();

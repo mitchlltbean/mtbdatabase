@@ -16,7 +16,7 @@ CREATE TABLE role (
 id INT NOT NULL AUTO_INCREMENT,
 title VARCHAR (30),
 salary DECIMAL (10, 2),
-department INT NOT NULL REFERENCES  department(id) DEFAULT 0,
+department INT REFERENCES  department(id),
 PRIMARY KEY (id)
 
 
@@ -32,7 +32,7 @@ id INT NOT NULL AUTO_INCREMENT,
 first_name VARCHAR (30),
 last_name VARCHAR (30),
 manager_id INT ,
-role_id INT NOT NULL REFERENCES role(id),
+role_id INT REFERENCES role(id),
 PRIMARY KEY (id)
   
 );
