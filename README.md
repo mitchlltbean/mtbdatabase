@@ -1,10 +1,12 @@
 # MySQL Homework: Employee Tracker
 
+Video- https://drive.google.com/file/d/1Z4xeUIFkv-gfRAWtrizxGxrPeuaJ8WDZ/view
+
 Your challenge is to architect and build a solution for managing a company's employees using node, inquirer, and MySQL.
 
 ## Instructions
 
-Install any npm packages associated with the package jasoon
+Install any npm packages associated with the package jason
 Using The CMD Line using `node index.js` You can create the folowing tables, from Inquirer Questions
 
 - **department**:
