@@ -31,8 +31,9 @@ function start() {
         createRole();
       } else if (answer.start === "Create Employee") {
         createEmployee();
-      } else answer.start === "Exit";
-      connection.end();
+      } else {
+        connection.end();
+      }
     });
 }
 start();
