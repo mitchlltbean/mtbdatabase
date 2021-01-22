@@ -34,7 +34,7 @@ function createDept() {
       // when finished prompting, insert a new item into the db with that info
       connection.query(
         "INSERT INTO department SET ?",
-        { department: answer.addDepart },
+        { name: answer.addDepart },
         function (err, data) {
           if (err) throw err;
           console.table(data);
@@ -69,7 +69,20 @@ function createRole() {
           // console.table(data);
         }
       );
-    })
+    });
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "title",
+        message: "what role?",
+      },
+      {
+        type: "input",
+        name: "salary",
+        message: "what salary?",
+      },
+    ])
     .then((answer) => {
       // when finished prompting, insert a new item into the db with that info
       console.log;
